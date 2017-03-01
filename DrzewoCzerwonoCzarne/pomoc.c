@@ -22,18 +22,18 @@ typedef struct wezel{
 	int kolor;
 } Twezla ;  /* typ wezla */
 
-/* drzewa z wartownikami: wezel wskazywany przez "nil" jest wartownikiem 
-   zastepujacym NULL; dla korzenia pole "p" ma wartosc "nil"; 
-   przy usuwaniu trzeba odpowiednio wypelnic pole nil->p 
+/* drzewa z wartownikami: wezel wskazywany przez "nil" jest wartownikiem
+   zastepujacym NULL; dla korzenia pole "p" ma wartosc "nil";
+   przy usuwaniu trzeba odpowiednio wypelnic pole nil->p
 */
-Wskwezla nil; 
+Wskwezla nil;
 
 void nilInit(void){
 /* funkcja inicjujaca nil; musi byc wywolana przed budowaniem drzewa */
   nil= (Wskwezla) malloc(sizeof(Twezla));
   nil->p = NULL;
   nil->kolor = BLACK;
-  nil->left = nil->right = NULL;  
+  nil->left = nil->right = NULL;
 }
 
 void drukuj(Wskwezla w);
@@ -43,14 +43,14 @@ void drukuj(Wskwezla w);
 void drukujDot(Wskwezla r);
   // generuje w plikach drzewo0.gv,  drzewo1.gv ...
   // opis drzew o korzeniu r do wydrukowania przez program dot
-  // zlecenie "dot -Tpdf -O drzewo1.gv" utworzy plik "drzewo1.gv.pdf" 
+  // zlecenie "dot -Tpdf -O drzewo1.gv" utworzy plik "drzewo1.gv.pdf"
 
 /* ------------  implementacja ------------------------------------- */
 char wydruk[IL_POZ+1][SZER_EKR];
 
 void drukujost(Wskwezla w, int l, int p,int poziom){
        int srodek = (l+p)/2;
-       if (w==nil)   return; 
+       if (w==nil)   return;
        wydruk[poziom][srodek]='*';
 }
 
@@ -105,11 +105,11 @@ void drukujKrawedz(FILE *plikwy, Wskwezla r, int z, Wskwezla syn, int zs){
     fprintf(plikwy,"%d ",syn->klucz);
     fprintf(plikwy,"\"]\n");
     fprintf(plikwy,"%d -- %d ;\n",z,zs);
-  }  
+  }
 }
 
 int rekDrukujDot(Wskwezla r, int z, FILE *plikwy){
-  // drukuje drzewo o korzeniu r 
+  // drukuje drzewo o korzeniu r
   // z  - numer wezla r
   // zwraca najwiekszy numer wezla w poddrzewie, ktorego jest korzeniem
   // zakladamy, ze korzen r jest juz wydrukowany
@@ -125,9 +125,9 @@ int rekDrukujDot(Wskwezla r, int z, FILE *plikwy){
 }
 
 void drukujDot(Wskwezla r){
-  // generuje w plikach drzewo0.gv, dzrewo1.gv, ... 
+  // generuje w plikach drzewo0.gv, dzrewo1.gv, ...
   // opisy drzew o korzeniu r pzeznaczone do wydrukowania przez program dot
-  // zlecenie "dot -Tpdf -O drzewo1.gv" utworzy plik "drzewo1.gv.pdf" 
+  // zlecenie "dot -Tpdf -O drzewo1.gv" utworzy plik "drzewo1.gv.pdf"
   static int gdzie=0;
   char numer[10];
   char nazwap[20]="drzewo";
@@ -168,19 +168,19 @@ Wskwezla nowyWezel(int klucz, int kolor){
      w->kolor = kolor;
      w->left = w->right = nil;
      return w;
-}  
+}
 
-main(){
-   /* dla przetestowania funkcji drukuj±cych
+int main(){
+   /* dla przetestowania funkcji drukujï¿½cych
       zamiast wstawiac kolejno klucze do drzewa
-      zbudujemy "rêcznie" drzewo   
+      zbudujemy "rï¿½cznie" drzewo
              5
             / \
-           3   8       
+           3   8
               / \
              6   9
       z czerwonym wezlem 8.
-      Drukowanie po dolaczeniu kolejnych wezlow. 
+      Drukowanie po dolaczeniu kolejnych wezlow.
       Trzeba naciskac ENTER zeby isc dalej
 */
      nilInit();
@@ -217,9 +217,3 @@ main(){
      getchar();
 
 }
-
-     
-
-
-
-
