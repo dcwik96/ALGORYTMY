@@ -1,5 +1,3 @@
-//wchodzacy zawsze na czerwono... nie sprawdzaj a od razu poprawiaj kolory...
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -20,7 +18,12 @@ struct wezel *root = NULL;
 void Rotate(/* arguments */) {
 }
 
-void CheckIfConflict(/* arguments */) {  //boolean
+void RepairTreeFromLeft(struct wezel *ojciecDodanego,struct wezel *nowoDodany){
+
+}
+
+void RepairTreeFromRight(struct wezel *ojciecDodanego,struct wezel *nowoDodany){
+
 }
 
 void Add(struct wezel *wchodzacy, int nowaLiczba) {
@@ -39,12 +42,33 @@ void Add(struct wezel *wchodzacy, int nowaLiczba) {
     else{
       wezel *nowy = (wezel*)malloc(sizeof *root);
       nowy->liczba = nowaLiczba;
-      root->ojciec = wchodzacy;
-      root->lewy = NULL;
-      root->prawy = NULL;
-      root->kolor = BLACK;
+      nowy->ojciec = wchodzacy;
+      nowy->lewy = NULL;
+      nowy->prawy = NULL;
+      nowy->kolor = RED;
+			wchodzacy->lewy = nowy;
+			if (wchodzacy != root) {
+			RepairTreeFromLeft(wchodzacy,nowy);
+			}
     }
   }
+	else if (nowaLiczba > wchodzacy->liczba) {
+		if (wchodzacy->prawy != NULL) {
+			Add(wchodzacy->prawy,nowaLiczba);
+		}
+		else{
+			wezel *nowy = (wezel*)malloc(sizeof *root);
+			nowy->liczba = nowaLiczba;
+			nowy->ojciec = wchodzacy;
+			nowy->lewy = NULL;
+			nowy->prawy = NULL;
+			nowy->kolor = RED;
+			wchodzacy->prawy = nowy;
+			if (wchodzacy != root) {
+			RepairTreeFromRight(wchodzacy,nowy);
+			}
+		}
+	}
 }
 
 void SearchMaxDeap(/* arguments */) {
