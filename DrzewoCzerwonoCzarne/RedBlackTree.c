@@ -25,47 +25,34 @@ typedef struct wezel{
 	int kolor;
 } wezel;
 
+int counterRedLeafs;
 struct wezel *root = NULL;
 
-void RotateLeft(struct wezel *root,struct wezel *wchodzacy) {
-	wezel *prawy = (wezel*)malloc(sizeof *root);
-	prawy = wchodzacy->prawy;
-	wchodzacy->prawy = prawy->lewy;
+void RotateLeft(struct wezel *starszy,struct wezel *konfliktowy) {
 
-	if (wchodzacy->ojciec == NULL)
-		root = prawy;
-
-	else if (wchodzacy == wchodzacy->ojciec->lewy)
-		wchodzacy->ojciec->lewy = prawy;
-
-	else
-		wchodzacy->ojciec->prawy = prawy;
-
-		prawy->lewy = wchodzacy;
-		wchodzacy->ojciec = prawy;
 }
 
-void RotateRight(struct wezel *root,struct wezel *wchodzacy) {
-	wezel *lewy = (wezel*)malloc(sizeof *root);
-	lewy = wchodzacy->lewy;
-	wchodzacy->lewy = lewy->prawy;
+void RotateRight(struct wezel *starszy,struct wezel *konfliktowy) {
+	if (konfliktowy->ojciec == starszy) {
+		konfliktowy->ojciec = starszy->ojciec;
+		starszy->ojciec->prawy = konfliktowy;
+		if (konfliktowy->prawy != NULL) {
+			starszy->lewy = konfliktowy->prawy;
+			konfliktowy->prawy->ojciec = starszy;
+		}
+		starszy->ojciec = konfliktowy;
+		konfliktowy->prawy = starszy;
+	}
+	else if(konfliktowy->ojciec->ojciec == starszy){
+		if (starszy == root) {
 
-	if (wchodzacy->lewy != NULL)
-		wchodzacy->lewy->ojciec = wchodzacy;
+		}
+		else{
 
-	lewy->ojciec = wchodzacy->ojciec;
+		}
+	}
 
-	if (wchodzacy->ojciec == NULL)
-		root = lewy;
-
-	else if (wchodzacy == wchodzacy->ojciec->lewy)
-		wchodzacy->ojciec->lewy = lewy;
-
-	else
-		wchodzacy->ojciec->prawy = lewy;
-
-	lewy->prawy = wchodzacy;
-	wchodzacy->ojciec = lewy;
+	else printf("Cos poszlo nie tak przy rotacji w prawo\n");
 }
 
 void RepairTree(struct wezel *root,struct wezel *wchodzacy){
@@ -85,16 +72,19 @@ void RepairTree(struct wezel *root,struct wezel *wchodzacy){
 				ojciec->kolor = BLACK;
 				wujek->kolor = BLACK;
 				wchodzacy = dziadek;
+				if (dziadek == root) {
+					dziadek->kolor = BLACK;
+				}
 			}
 			// przypadek 2
 			else{
 				if (wchodzacy == ojciec->prawy) {
-					RotateLeft(root,ojciec);
+					RotateLeft(ojciec,wchodzacy);
 					wchodzacy = ojciec;
 					ojciec = wchodzacy->ojciec;
 				}
 				// przypadek 3
-				RotateRight(root,dziadek);
+				RotateRight(dziadek,wchodzacy);
 				int temp=0;
 				temp = ojciec->kolor;
 				ojciec->kolor = dziadek->kolor;
@@ -116,12 +106,12 @@ void RepairTree(struct wezel *root,struct wezel *wchodzacy){
 			// przypadek 2
 			else{
 				if (wchodzacy == ojciec->lewy) {
-					RotateRight(root,ojciec);
+					RotateRight(ojciec,wchodzacy);
 					wchodzacy = ojciec;
 					ojciec = wchodzacy->ojciec;
 				}
 				// przypadek 3
-				RotateLeft(root,dziadek);
+				RotateLeft(dziadek,wchodzacy);
 				int temp=0;
 				temp = ojciec->kolor;
 				ojciec->kolor = dziadek->kolor;
@@ -136,7 +126,9 @@ void RepairTree(struct wezel *root,struct wezel *wchodzacy){
 
 
 void Add(struct wezel *wchodzacy, int nowaLiczba) {
+	printf("Liczba wchodzaca do ADD %i\n", nowaLiczba);
   if (root == NULL) {
+		printf("Liczba wchodzaca do ROOT %i\n", nowaLiczba);
     root = (wezel*)malloc(sizeof *root);
     root->liczba = nowaLiczba;
     root->ojciec = NULL;
@@ -146,9 +138,11 @@ void Add(struct wezel *wchodzacy, int nowaLiczba) {
   }
   else if (nowaLiczba <= wchodzacy->liczba) {
     if (wchodzacy->lewy != NULL) {
+			printf("Wywołuje rek z ta liczba %i\n", nowaLiczba);
       Add(wchodzacy->lewy,nowaLiczba);
     }
     else{
+			printf("Liczba mniejsza od ojca %i to %i\n", wchodzacy->liczba,nowaLiczba);
       wezel *nowy = (wezel*)malloc(sizeof *root);
       nowy->liczba = nowaLiczba;
       nowy->ojciec = wchodzacy;
@@ -156,9 +150,9 @@ void Add(struct wezel *wchodzacy, int nowaLiczba) {
       nowy->prawy = NULL;
       nowy->kolor = RED;
 			wchodzacy->lewy = nowy;
-			if (wchodzacy != root) {
+			//if (wchodzacy != root) {
 			RepairTree(root,nowy);
-			}
+		///	}
     }
   }
 	else if (nowaLiczba > wchodzacy->liczba) {
@@ -173,9 +167,9 @@ void Add(struct wezel *wchodzacy, int nowaLiczba) {
 			nowy->prawy = NULL;
 			nowy->kolor = RED;
 			wchodzacy->prawy = nowy;
-			if (wchodzacy != root) {
+			//if (wchodzacy != root) {
 			RepairTree(root,nowy);
-			}
+			//}
 		}
 	}
 }
@@ -186,11 +180,23 @@ void SearchMaxDeap(/* arguments */) {
 void SearchMinDeap(/* arguments */) {
 }
 
+void CountRedLeafs(struct wezel *wchodzacy){
+	if (wchodzacy->lewy != NULL) {
+		CountRedLeafs(wchodzacy->lewy);
+	}
 
+	else if(wchodzacy->prawy != NULL){
+			CountRedLeafs(wchodzacy->prawy);
+	}
+	counterRedLeafs++;
+}
 
 int main() {
 	Add(root,5);
 	Add(root,4);
 	Add(root,3);
+	Add(root,2);
+	Add(root,1);
+	CountRedLeafs(root);
   return 0;
 }
