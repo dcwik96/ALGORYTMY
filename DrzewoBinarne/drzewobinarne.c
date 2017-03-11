@@ -79,7 +79,6 @@ void PrintInOrder(struct wezel *wchodzacy){
   if (wchodzacy->p_syn != NULL) {
     PrintInOrder(wchodzacy->p_syn);
   }
-
 }
 
 struct wezel *Search(struct wezel *wchodzacy,const char *litera){

@@ -1,15 +1,3 @@
-/*
-Dawid Ćwik
-AlgorytmyiStrukturyDanych
-Drzewa Czerwnono Czarne
-03.03.17r
-*/
-
-/*
-Zadanie AL8.3 (4+1 pkt)
-1. Napisz program (= struktury danych + procedury), który umożliwia wstawianie elementów do drzewa czerwono-czarnego. (4 pkt)
-2. Napisz i przetestuj procedury, które wyznaczają maksymalną i minimalną głębokość liści w drzewie czerwono-czarnym oraz liczbę czerwonych węzłów (1 pkt)
-*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -25,7 +13,7 @@ typedef struct wezel{
 	int kolor;
 } wezel;
 
-int counterRedLeafs;
+
 struct wezel *root = NULL;
 
 void RotateLeft(struct wezel **root,struct wezel *wchodzacy){
@@ -74,7 +62,9 @@ void RepairTree(struct wezel **root,struct wezel *wchodzacy){
 	while (wchodzacy != *root && wchodzacy->ojciec->kolor == RED) { //WCHODZACY ROZNY OD ROOT I OJCIEC CZERWONY
 		if (wchodzacy->ojciec == wchodzacy->ojciec->ojciec->lewy) { // OJCIEC PO LEWEJ STRONIE SWOJEGO OJCA
 			wezel *y = (wezel*)malloc(sizeof *root);
+
 			if (wchodzacy->ojciec->ojciec->prawy != NULL) {
+				printf("tak\n");
 				y = wchodzacy->ojciec->ojciec->prawy;	//Y == WUJEK
 				if (y->kolor == RED) { // WUJEK CZERWONY ?
 					wchodzacy->ojciec->kolor = BLACK;
@@ -84,7 +74,6 @@ void RepairTree(struct wezel **root,struct wezel *wchodzacy){
 						wchodzacy = wchodzacy->ojciec->ojciec;
 					}
 				}
-				break;
 			}
 			if (wchodzacy == wchodzacy->ojciec->prawy) {
 				wchodzacy = wchodzacy->ojciec;
@@ -106,7 +95,7 @@ void RepairTree(struct wezel **root,struct wezel *wchodzacy){
 					wchodzacy = wchodzacy->ojciec->ojciec;
 				}
 			}
-			else if (wchodzacy == wchodzacy->ojciec->lewy) {
+			if (wchodzacy == wchodzacy->ojciec->lewy) {
 				wchodzacy = wchodzacy->ojciec;
 				RotateRight(root,wchodzacy);
 			}
@@ -116,10 +105,8 @@ void RepairTree(struct wezel **root,struct wezel *wchodzacy){
 			RotateLeft(root,wchodzacy->ojciec->ojciec);
 		}
 	}
-	(*root)->kolor = BLACK;
+
 }
-
-
 
 void Add(struct wezel *wchodzacy, int nowaLiczba) {
   if (root == NULL) {
@@ -142,7 +129,9 @@ void Add(struct wezel *wchodzacy, int nowaLiczba) {
       nowy->prawy = NULL;
       nowy->kolor = RED;
 			wchodzacy->lewy = nowy;
-			RepairTree(&root,nowy);
+      // if (nowy->ojciec != root) {
+        RepairTree(&root,nowy);
+      // }
     }
   }
 	else if (nowaLiczba > wchodzacy->liczba) {
@@ -157,59 +146,38 @@ void Add(struct wezel *wchodzacy, int nowaLiczba) {
 			nowy->prawy = NULL;
 			nowy->kolor = RED;
 			wchodzacy->prawy = nowy;
-			RepairTree(&root,nowy);
+			// if (nowy->ojciec != root) {
+        RepairTree(&root,nowy);
+      // }
 		}
 	}
+	printf("asd %i\n", root->liczba);
+	printf("Zmieniam kolor root: %i na czarny\n", root->liczba);
+	root->kolor = BLACK;
 }
 
-int SearchMaxDeap(wezel *wchodzacy) {
-	int hleft, hright;
-	if ( wchodzacy != NULL )
-	{
-		hleft = SearchMaxDeap(wchodzacy->lewy);
-		hright = SearchMaxDeap(wchodzacy->prawy);
-		return(1 + (hleft > hright ? hleft : hright));
-	}
-	else
-		return(0);
+void PrintInOrder(struct wezel *wchodzacy){
+  if (wchodzacy->lewy != NULL) {
+    PrintInOrder(wchodzacy->lewy);
+  }
+
+	printf("%i %i\n", wchodzacy->liczba, wchodzacy->kolor);
+
+  if (wchodzacy->prawy != NULL) {
+    PrintInOrder(wchodzacy->prawy);
+  }
 }
 
-int SearchMinDeap(wezel *wchodzacy) {
-	int hleft, hright;
-	if ( wchodzacy != NULL )
-	{
-		hleft = SearchMaxDeap(wchodzacy->lewy);
-		hright = SearchMaxDeap(wchodzacy->prawy);
-		return(1 + (hleft <= hright ? hleft : hright));
-	}
-	else
-		return(0);
-}
-
-void CountRedLeafs(struct wezel *wchodzacy){
-	if (wchodzacy->lewy != NULL) {
-		CountRedLeafs(wchodzacy->lewy);
-	}
-	if (wchodzacy->prawy != NULL) {
-		CountRedLeafs(wchodzacy->prawy);
-	}
-	if (wchodzacy->kolor == RED) {
-		printf("Czerwony lisc %i\n", wchodzacy->liczba);
-		counterRedLeafs++;
-	}
-}
-
-int main() {
-	Add(root,5);
+int main(int argc, char const *argv[]) {
+  Add(root,5);
 	Add(root,6);
 	Add(root,7);
 	Add(root,1);
-	Add(root,8);
-	Add(root,2);
+	printf("%i\n", root->liczba);
+	PrintInOrder(root);
+	// Add(root,8);
+	// Add(root,9);
+	// Add(root,10);
 
-	printf("root %i\n", root->liczba);
-	CountRedLeafs(root);
-	printf("czerwone %i\n", counterRedLeafs);
-	printf("Max: %i, Min: %i\n", SearchMaxDeap(root), SearchMinDeap(root));
   return 0;
 }
